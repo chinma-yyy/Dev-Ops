@@ -13,26 +13,13 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "aws/EC2.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "eeb160787f43bd2d",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "aws/EBS.md",
+                "file": "aws/S3.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -98,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "aws/EBS.md",
+                "file": "aws/S3.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "aws/EBS.md",
+                "file": "aws/S3.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "aws/EBS.md"
+                "file": "aws/S3.md"
               }
             }
           }
@@ -159,13 +146,21 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "eeb160787f43bd2d",
+  "active": "d124e0c56b1722a4",
   "lastOpenFiles": [
+    "aws/EBS.md",
+    "aws/S3.md",
     "aws/EC2.md",
     "aws/EFS.md",
+    "aws/ELB.md",
     "aws/IAM.md",
-    "aws/EBS.md",
-    "Pasted image 20240713155451.png",
+    "aws/RDS.md",
+    "aws/Route53.md",
+    "images/Pasted image 20240713155451.png",
+    "images/Pasted image 20240715131127.png",
+    "images/Pasted image 20240715131154.png",
+    "images",
+    "Pasted image 20240715131227.png",
     "Untitled.canvas"
   ]
 }
