@@ -28,3 +28,100 @@ A hosted zone is a container for records that define how to route traffic to a d
 - **Private Hosted Zones**: Contain records that specify how to route traffic within one or more VPCs (private domain names), such as `application1.company.internal`.
 
 **Cost**: You pay $0.50 per month per hosted zone.
+
+
+## CNAME vs Alias
+
+### CNAME:
+- Points a hostname to any other hostname. (e.g., `app.mydomain.com` => `blabla.anything.com`)
+- **ONLY FOR NON ROOT DOMAIN** (e.g., `something.mydomain.com`)
+
+### Alias:
+- Points a hostname to an AWS Resource (e.g., `app.mydomain.com` => `blabla.amazonaws.com`)
+- Works for **ROOT DOMAIN** and **NON ROOT DOMAIN** (e.g., `mydomain.com`)
+- Free of charge
+
+## Alias Records
+- Maps a hostname to an AWS resource
+- An extension to DNS functionality
+- Automatically recognizes changes in the resource’s IP addresses
+- Unlike CNAME, it can be used for the top node
+- Alias Record is always of type A/AAAA for AWS resources (IPv4 / IPv6)
+- You can’t set the TTL
+- **You cannot set an ALIAS record for an EC2 DNS name**
+
+# Routing Policies
+
+## Simple
+- Typically, route traffic to a single resource
+- Can specify multiple values in the same record
+- If multiple values are returned, a random one is chosen by the client
+- When Alias enabled, specify only one AWS resource
+- Can’t be associated with Health Checks
+
+## Weighted
+- Control the percentage of requests that go to each specific resource
+- Assign each record a relative weight:
+  - Weights don’t need to sum up to 100
+  - DNS records must have the same name and type
+  - Can be associated with Health Checks
+- Use cases: load balancing between regions, testing new application versions
+- Assign a weight of 0 to a record to stop sending traffic to a resource
+- If all records have a weight of 0, then all records will be returned equally
+
+## Latency
+- Redirect to the resource that has the least latency close to us
+- Super helpful when latency for users is a priority
+- Latency is based on traffic between users and AWS Regions
+  - Germany users may be directed to the US if that’s the lowest latency
+- Can be associated with Health Checks (has a failover capability)
+
+## Failover (Active-Passive)
+- Create health checks for monitoring
+  - Health Checks pass only when the endpoint responds with 2xx and 3xx status codes
+  - Health Checks can be set up to pass/fail based on the text in the first 5120 bytes of the response
+  - Configure your router/firewall to allow incoming requests from Route 53 Health Checkers
+  - Health Checks are integrated with CloudWatch metrics
+  - About 15 global health checkers will check the endpoint health
+  - Healthy/Unhealthy Threshold: 3 (default)
+  - Interval: 30 sec (can set to 10 sec – higher cost)
+  - Supported protocol: HTTP, HTTPS, and TCP
+  - If > 18% of health checkers report the endpoint is healthy, Route 53 considers it Healthy. Otherwise, it’s Unhealthy
+  - Combine the results of multiple Health Checks into a single Health Check
+    - You can use OR, AND, or NOT
+    - Can monitor up to 256 Child Health Checks
+    - Specify how many of the health checks need to pass to make the parent pass
+  - Usage: perform maintenance on your website without causing all health checks to fail
+
+## Geolocation
+- Different from Latency-based!
+- This routing is based on user location
+- Specify location by Continent, Country, or by US State
+  - If there’s overlapping, the most precise location is selected
+- Should create a “Default” record in case there’s no match on location
+- Use cases: website localization, restrict content distribution, load balancing
+- Can be associated with Health Checks
+
+## Geoproximity
+Must use the traffic flow for creating these policies
+- Route traffic to your resources based on the geographic location of users and resources
+- Ability to shift more traffic to resources based on the defined bias
+  - To change the size of the geographic region, specify bias values:
+    - To expand (1 to 99) – more traffic to the resource
+    - To shrink (-1 to -99) – less traffic to the resource
+
+## IP-based Routing
+- Routing is based on clients’ IP addresses
+- You provide a list of CIDRs for your clients and the corresponding endpoints/locations (user-IP-to-endpoint mappings)
+
+## Multi-Value
+- Use when routing traffic to multiple resources
+- Route 53 returns multiple values/resources
+- Can be associated with Health Checks (return only values for healthy resources)
+- Up to 8 healthy records are returned for each Multi-Value query
+- Multi-Value is not a substitute for having an ELB
+
+## Using Route 53 with a Third-Party Registrar
+- If you buy your domain on a third-party registrar, you can still use Route 53 as the DNS Service provider:
+  1. Create a Hosted Zone in Route 53
+  2. Update NS Records on the third-party website to use Route 53 Name Servers
