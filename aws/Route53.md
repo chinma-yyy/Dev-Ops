@@ -10,10 +10,44 @@ The Domain Name System (DNS) translates human-friendly hostnames into machine IP
 - **Name Server**: Resolves DNS queries, either Authoritative or Non-Authoritative.
 - **Top-Level Domain (TLD)**: Examples include .com, .us, .in, .gov, .org, etc.
 - **Second-Level Domain (SLD)**: Examples include amazon.com, google.com, etc.
-- 
+
 ![[Pasted image 20240715131127.png]]
 
 ![[Pasted image 20240715131154.png]]
+## **The image showing Root DNS server owned by ICANN and TLD DNS server owned by IANA is wrong info.**
+## How DNS Works
+
+### Step-by-Step Process
+
+1. **DNS Query**:
+   - A user enters a domain name (e.g., www.example.com) into their web browser.
+
+2. **Recursive Resolver**:
+   - The browser sends a query to a recursive resolver, a type of DNS server that can query other DNS servers on behalf of the user.
+
+3. **Root Name Server**:
+   - The recursive resolver queries a root name server. Root name servers are responsible for directing queries to the appropriate top-level domain (TLD) name servers (e.g., .com, .net).
+
+4. **TLD Name Server**:
+   - The recursive resolver then queries the TLD name server. TLD name servers are responsible for providing information about the authoritative name servers for the specific domain.
+
+5. **Authoritative Name Server**:
+   - Finally, the recursive resolver queries the authoritative name server for the domain. The authoritative name server holds the DNS records for the domain and provides the IP address associated with the domain name.
+
+6. **Response**:
+   - The IP address is returned to the browser. The browser can then contact the web server using the provided IP address and load the website.
+### Example
+
+- **User Action**: User types "www.example.com" in the browser.
+- **Browser**: Sends a DNS query to the recursive resolver.
+- **Recursive Resolver**: Queries a root name server.
+- **Root Name Server**: Responds with the address of the .com TLD name server.
+- **Recursive Resolver**: Queries the .com TLD name server.
+- **TLD Name Server**: Responds with the address of the authoritative name server for "example.com".
+- **Recursive Resolver**: Queries the authoritative name server.
+- **Authoritative Name Server**: Responds with the IP address for "www.example.com".
+- **Recursive Resolver**: Returns the IP address to the browser.
+- **Browser**: Contacts the web server at the provided IP address and loads the website..
 ## Record Types
 - **A**: Maps a hostname to an IPv4 address.
 - **AAAA**: Maps a hostname to an IPv6 address.
