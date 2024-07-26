@@ -21,9 +21,17 @@ Using a private key and public key, you can create a signed URL for user access 
 
 ## Additional Features
 
-### Edge Functions
-- **Lambda@Edge**: Run Lambda functions at CloudFront edge locations to customize content delivery. For example, use Lambda@Edge to modify headers, perform URL redirects, or generate dynamic content.
+## Edge Functions
 
+### Lambda@Edge
+- **Lambda@Edge**: Run Lambda functions at CloudFront edge locations to customize content delivery. Examples of use cases include generating dynamic content.
+
+### CloudFront Functions
+- **CloudFront Functions**: Run lightweight JavaScript functions at CloudFront edge locations. These functions are highly scalable and can be used to inspect or modify HTTP request and response headers. Examples of use cases include:
+  - **Header manipulation**: Insert, modify, or delete HTTP headers in the request or response.
+  - **URL rewrites or redirects**: Modify URLs to direct traffic as needed.
+  - **Request authentication & authorization**: Create and validate user-generated tokens (e.g., JWT) to allow or deny requests.
+![[Pasted image 20240725220127.png]]
 ### Monitoring and Logging
 - **Access Logs**: Enable logging to capture detailed information about every user request. These logs are stored in an S3 bucket.
 - **Metrics and Alarms**: Use CloudWatch to monitor CloudFront performance metrics and set alarms for specific thresholds.
