@@ -71,3 +71,22 @@ The `terraform output` command is used to extract the value of an output variabl
 ```sh
 terraform output
 ```
+
+Terraform State mangement
+As your Terraform usage becomes more advanced, there are some cases where you may need to
+modify the Terraform state.
+It is important to never modify the state file directly. Instead, make use of terraform state
+command.
+State Sub CommandDescription
+listList resources within terraform state file.
+mvMoves item with terraform state.
+pullManually download and output the state from remote state.
+pushManually upload a local state file to remote state.
+rmRemove items from the Terraform state
+showShow the attributes of a single resource in the state.
+
+The terraform state mv command is used to move items in a Terraform state.
+This command is used in many cases in which you want to rename an existing resource without
+destroying and recreating it.
+Due to the destructive nature of this command, this command will output a backup copy of the
+state prior to saving any changes

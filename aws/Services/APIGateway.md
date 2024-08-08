@@ -1,81 +1,103 @@
 # AWS API Gateway
 
 ## Overview
-AWS API Gateway is a serverless service for creating, publishing, maintaining, monitoring, and securing APIs. It acts as a "front door" for applications to access data, business logic, or functionality from your backend services, such as applications running on Amazon EC2, code running on AWS Lambda, or any web application.
+AWS API Gateway is a serverless service to manage all the APIs, and we can communicate with this gateway using various methods like Lambda functions, HTTP endpoints, and AWS services.
 
 ## Communication Types
 
 ### Lambda Function
-- **Invoke Lambda Function**: Expose REST APIs backed by AWS Lambda functions.
-- **Use Cases**: Easy to deploy and manage serverless REST APIs.
+- **Invoke Lambda Function**: Easy way to expose REST API backed by AWS Lambda.
+  - **Use Case**: Exposing serverless functions via a REST API.
 
 ### HTTP
-- **Expose HTTP Endpoints**: Connect API Gateway to backend HTTP endpoints.
-- **Use Cases**: Integrate internal HTTP APIs, on-premises applications, or services behind an Application Load Balancer. Add features like rate limiting, caching, user authentication, and API keys.
+- **Expose HTTP Endpoints**: Expose HTTP endpoints in the backend.
+  - **Example**: Internal HTTP API on-premises, Application Load Balancer.
+  - **Why**: Add rate limiting, caching, user authentications, API keys, etc.
 
 ### AWS Service
-- **Expose AWS APIs**: Use API Gateway to call other AWS services.
-- **Use Cases**: Start AWS Step Function workflows, post messages to SQS, etc. Add authentication, public deployment, and rate control.
+- **Expose any AWS API through the API Gateway**: 
+  - **Example**: Start an AWS Step Function workflow, post a message to SQS.
+  - **Why**: Add authentication, deploy publicly, rate control.
 
 ## Stages and Deployments
 
 ### Stages
-- **Stages**: Deploy API changes to different stages (e.g., dev, test, prod).
-- **Configuration**: Each stage has its own configuration parameters.
-- **Rollback**: Deployment history is maintained, allowing rollback to previous stages.
-- **Stage Variables**: Environment variables for API Gateway, used to change configuration values often. They can be used in Lambda function ARNs, HTTP endpoints, and parameter mapping templates.
+- **Stages**: Making changes in the API Gateway does not mean they’re effective; you need to make a “deployment” for them to be in effect.
+  - **Common Source of Confusion**: Changes are deployed to “Stages” (as many as you want).
+  - **Naming**: Use the naming you like for stages (dev, test, prod).
+  - **Configuration Parameters**: Each stage has its own configuration parameters.
+  - **Rollback**: Stages can be rolled back as a history of deployments is kept.
 
-### Canary Deployments
-- **Canary Deployment**: Gradually deploy new changes to a small percentage of users before rolling out to everyone.
-- **Configuration**: Enable canary in the deployment, set canary and production percentages.
-- **Promotion**: Promote the canary deployment to production after testing.
+- **Stage Variables**: Like environment variables for API Gateway.
+  - **Use Cases**: Change often-changing configuration values.
+  - **Applications**: Configure HTTP endpoints your stages talk to (dev, test, prod), pass configuration parameters to AWS Lambda through mapping templates.
+  - **Access in Lambda**: Stage variables are passed to the ”context” object in AWS Lambda.
+  - **Format**: `${stageVariables.variableName}`.
+
+### Canary Deployment
+- **Canary Deployment**: Distribute traffic based on weights on Lambda aliases.
+  - **Process**: 
+    1. Enable canary in the deployment.
+    2. Add the canary percentage and prod percentage.
+    3. Deploy a canary version; the percentage to canary is diverted accordingly.
+    4. Promote the canary, making it the new prod.
 
 ## Integration Types
 
-### MOCK
+### Integration Type MOCK
 - **MOCK**: API Gateway returns a response without sending the request to the backend.
 
-### AWS_PROXY
-- **AWS_PROXY**: Direct integration with AWS services.
+### Integration Type AWS_PROXY
+- **AWS_PROXY**: Direct input to the resource.
 
-### HTTP_PROXY
-- **HTTP_PROXY**: Integrate with HTTP endpoints, allowing the addition of HTTP headers if needed (e.g., API key).
+### Integration Type HTTP_PROXY
+- **HTTP_PROXY**: Add HTTP headers if needed (e.g., API key).
 
 ## Mapping Templates
-- **Mapping Templates**: Transform requests to the backend and responses back to the client. Useful for transforming data formats (e.g., XML to JSON, JSON to XML).
+- **Mapping Templates**: Transform the requests going to the resource or the responses coming out of the resource going back to the client.
+  - **Use Cases**: Transform from XML to JSON or JSON to XML in cases of SOAP API to REST API scenarios.
 
 ## OpenAPI and Swagger
-- **OpenAPI/Swagger**: Directly import API specifications to configure API Gateway. Additional parameters in specifications can validate requests and return errors for improper requests.
+- **OpenAPI/Swagger**: Directly import OpenAPI or Swagger specification files and configure your API Gateway.
+  - **Additional Parameters**: Validate the request and return an error if the request does not have the proper attributes.
 
 ## Caching
-- **Caching**: Reduce the number of calls to the backend.
-  - **TTL (Time to Live)**: Default is 300 seconds (min: 0s, max: 3600s).
-  - **Per Stage**: Caches are defined per stage.
+- **Caching**: Reduces the number of calls made to the backend.
+  - **TTL**: Default TTL (time to live) is 300 seconds (min: 0s, max: 3600s).
+  - **Stage-based**: Caches are defined per stage.
   - **Override Settings**: Possible to override cache settings per method.
   - **Capacity**: Cache capacity ranges from 0.5GB to 237GB.
-  - **Invalidate Cache**: Clients can invalidate the cache with the `Cache-Control: max-age=0` header (with proper IAM authorization).
+  - **Invalidate Cache**: Clients can invalidate the cache with the header `Cache-Control: max-age=0` (with proper IAM authorization).
 
 ## Cross-Origin Resource Sharing (CORS)
-- **CORS**: Enable CORS to receive API calls from another domain.
-  - **Headers**: `Access-Control-Allow-Methods`, `Access-Control-Allow-Headers`, `Access-Control-Allow-Origin`.
+- **CORS**: Must be enabled when you receive API calls from another domain.
+  - **Pre-flight Request Headers**: 
+    - `Access-Control-Allow-Methods`
+    - `Access-Control-Allow-Headers`
+    - `Access-Control-Allow-Origin`
   - **Configuration**: Can be enabled through the console.
 
-## Gateway Authorizers
+## Gateway Authorizer
 
 ### IAM
-- **IAM Authorizer**: Suitable for users/roles within your AWS account. Manages authentication and authorization using Signature v4.
+- **IAM Authorizer**: Great for users/roles already within your AWS account, plus resource policy for cross-account access.
+  - **Features**: Handle authentication and authorization, leverages Signature v4.
 
 ### Custom Authorizer
-- **Custom Authorizer**: Ideal for third-party tokens. Allows flexibility in returned IAM policies. Handles authentication and authorization within a Lambda function.
+- **Custom Authorizer**: Great for third-party tokens.
+  - **Features**: Flexible in terms of IAM policy returned, handles authentication verification and authorization in the Lambda function. Pay per Lambda invocation, results are cached.
 
 ### Cognito User Pool
-- **Cognito User Pool**: Manages user pools, possibly backed by Facebook, Google login, etc. No custom code required. Authorization is implemented in the backend.
+- **Cognito User Pool**: Manage your own user pool (can be backed by Facebook, Google login, etc.).
+  - **Features**: No need to write custom code, must implement authorization in the backend.
 
 ## WebSocket API
-- **WebSocket APIs**: Used in real-time applications like chat applications, collaboration platforms, multiplayer games, and financial trading platforms.
+- **WebSocket APIs**: Used in real-time applications such as chat applications, collaboration platforms, multiplayer games, and financial trading platforms.
   - **Backend Integration**: Works with AWS Services (Lambda, DynamoDB) or HTTP endpoints.
-  - **Operations**:
-    - **POST**: Send a message from the server to the connected WebSocket client.
-    - **GET**: Get the latest connection status of the connected WebSocket client.
-    - **DELETE**: Disconnect the connected client from the WebSocket connection.
-  - **Routing**: Incoming JSON messages are routed to different backends based on a route selection expression.
+  - **Operations**: 
+    - `POST`: Sends a message from the server to the connected WebSocket client.
+    - `GET`: Gets the latest connection status of the connected WebSocket client.
+    - `DELETE`: Disconnects the connected client from the WebSocket connection.
+  - **Routing**: Incoming JSON messages are routed to different backend services. If no routes are defined, messages are sent to `$default`.
+  - **Route Selection Expression**: You request a route selection expression to select the field on JSON to route from.
+    - **Example**: `$request.body.action`

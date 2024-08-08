@@ -158,3 +158,20 @@
 - When there are overlapping CIDRs, a VPC peering connection cannot be created. However, PrivateLink does support overlapping CIDR.
 - We can create a maximum of 125 peering connections. There is no limit on PrivateLink connections.
 - VPC peering enables bidirectional traffic origin. PrivateLink allows only the consumer to originate the traffic.
+Transit gateways 
+so this is a gateway which provides transitivity between vpcs vpns and we can achieve a full service mesh between vpcs with this gateway.
+we can also have a peering in between two transit gateways just like a vpc  and also connect on premises server with the help of the vpn direct connect
+VPCs should not have overlapping
+CIDRs
+if enabled Transit Gateway default Route table
+gets associated with all the
+attachments
+which allows every traffic from each vpc to each vpc 
+we can attach routing tables to specific vpcs which are transit attachment routes tables which enables us to define which vpcs can be connected to which vpc just like a subnet route table
+we need to also allow the traffic for the subnet route tables for the vpcs for a parent cidr range which has all the vpcs address ranges
+
+first we create a transit gateway and then we create each attachment which will be atached to the transit gateway 
+then we can create transit attachment route tables and also we can disable default route table furing creating tgw these attachment route tables can help us restrict and manage the traffic between multiple vpcs 
+for these tables we create associations which is what the vpc will be able to access and also add the entry in the respective other vpc also.
+once these associations are created propogations are created which monitor the cidr in the vpc and add all the new and current cidr in the propogations 
+and we can see the routes also there 
