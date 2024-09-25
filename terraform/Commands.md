@@ -1,7 +1,7 @@
 # Terraform Commands
 
 ## Terraform Plan
-The `terraform plan` command checks what resources are created and what resources must be created with what settings. It must be run before actually bringing up any infrastructure.
+The `terraform plan` command checks what resources have been created and what resources must be created, along with their respective settings. This command should be run before actually provisioning any infrastructure.
 
 ### Usage
 ```sh
@@ -9,9 +9,9 @@ terraform plan
 ```
 
 ### Options
-- **-out=path**: The generated terraform plan can be saved to a specific path. This plan can then be used with `terraform apply` to ensure that only the changes shown in this plan are applied. This can be used to create an image for the infrastructure and use it in the future.
-- **-refresh=false**: Prevents Terraform from querying the current state during operations like `terraform plan`.
-- **-target=resource**: Targets a specific resource. This is generally used to operate on isolated portions of very large configurations.
+- **`-out=path`**: Save the generated Terraform plan to a specified path. This plan can then be used with `terraform apply` to ensure that only the changes shown in this plan are applied. This is useful for creating an image of the infrastructure for future use.
+- **`-refresh=false`**: Prevent Terraform from querying the current state during operations like `terraform plan`.
+- **`-target=resource`**: Target a specific resource. This is generally used to operate on isolated portions of very large configurations.
 
 ### Example
 ```sh
@@ -21,7 +21,7 @@ terraform plan -target=aws_instance.example
 ```
 
 ## Terraform Apply
-The `terraform apply` command brings up all the infrastructure and modifies the settings of any existing infrastructure if changes are detected. If any setting is changed for a particular resource, it will not create a new resource but will modify the current resource. All the resources are tracked in the Terraform state file.
+The `terraform apply` command provisions all the infrastructure and modifies the settings of any existing infrastructure if changes are detected. If any setting changes for a particular resource, Terraform will modify the current resource rather than creating a new one. All resources are tracked in the Terraform state file.
 
 ### Usage
 ```sh
@@ -29,7 +29,7 @@ terraform apply
 ```
 
 ### Options
-- **-replace**: Forces Terraform to replace an object even if there are no configuration changes that would require it. It is not a good practice to use it, but it can be useful in certain cases.
+- **`-replace`**: Force Terraform to replace an object even if there are no configuration changes that require it. This is generally not recommended, but it can be useful in certain situations.
 
 ### Example
 ```sh
@@ -38,10 +38,10 @@ terraform apply -replace="aws_instance.web"
 ```
 
 ### Logging
-Terraform has detailed logs which can be enabled by setting the `TF_LOG` environment variable to any value. You can set `TF_LOG` to one of the log levels `TRACE`, `DEBUG`, `INFO`, `WARN`, or `ERROR` to change the verbosity of the logs. To persist logged output, you can set `TF_LOG_PATH` to force the log to always be appended to a specific file when logging is enabled.
+Terraform provides detailed logs that can be enabled by setting the `TF_LOG` environment variable to any value. You can set `TF_LOG` to one of the log levels `TRACE`, `DEBUG`, `INFO`, `WARN`, or `ERROR` to control the verbosity of the logs. To persist log output, set `TF_LOG_PATH` to specify a file to which logs should be appended when logging is enabled.
 
 ## Terraform Format
-The `terraform fmt` command is used to rewrite Terraform configuration files to take care of the overall formatting.
+The `terraform fmt` command is used to rewrite Terraform configuration files to ensure consistent formatting.
 
 ### Usage
 ```sh
@@ -49,7 +49,7 @@ terraform fmt
 ```
 
 ## Terraform Validate
-`Terraform validate` primarily checks whether a configuration is syntactically valid. It can check various aspects including unsupported arguments, undeclared variables, and others.
+The `terraform validate` command checks whether a configuration is syntactically valid. It can detect issues like unsupported arguments, undeclared variables, and other potential errors.
 
 ### Usage
 ```sh
@@ -57,7 +57,7 @@ terraform validate
 ```
 
 ## Terraform Graph
-The `terraform graph` command is used to generate a visual representation of either a configuration or execution plan. The output of `terraform graph` is in the DOT format, which can easily be converted to an image.
+The `terraform graph` command generates a visual representation of either a configuration or an execution plan. The output is in DOT format, which can be converted to an image using various tools.
 
 ### Usage
 ```sh
@@ -72,21 +72,19 @@ The `terraform output` command is used to extract the value of an output variabl
 terraform output
 ```
 
-Terraform State mangement
-As your Terraform usage becomes more advanced, there are some cases where you may need to
-modify the Terraform state.
-It is important to never modify the state file directly. Instead, make use of terraform state
-command.
-State Sub CommandDescription
-listList resources within terraform state file.
-mvMoves item with terraform state.
-pullManually download and output the state from remote state.
-pushManually upload a local state file to remote state.
-rmRemove items from the Terraform state
-showShow the attributes of a single resource in the state.
+## Terraform State Management
+As your Terraform usage becomes more advanced, you may need to modify the Terraform state. It is important never to modify the state file directly. Instead, use the `terraform state` command.
 
-The terraform state mv command is used to move items in a Terraform state.
-This command is used in many cases in which you want to rename an existing resource without
-destroying and recreating it.
-Due to the destructive nature of this command, this command will output a backup copy of the
-state prior to saving any changes
+### State Subcommands
+
+| Command         | Description                                                      |
+|-----------------|------------------------------------------------------------------|
+| `list`          | List resources within the Terraform state file.                  |
+| `mv`            | Move items within the Terraform state.                           |
+| `pull`          | Manually download and output the state from the remote backend.  |
+| `push`          | Manually upload a local state file to the remote backend.        |
+| `rm`            | Remove items from the Terraform state.                           |
+| `show`          | Show the attributes of a single resource in the state.           |
+
+### Terraform State `mv`
+The `terraform state mv` command is used to move items within a Terraform state file. This command is useful when you want to rename an existing resource without destroying and recreating it. Due to the potentially destructive nature of this command, Terraform will output a backup copy of the state before saving any changes.

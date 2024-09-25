@@ -19,6 +19,10 @@ These policies specify when to remove data from the cache or refresh it, and are
 ### CloudFront Signed URL
 Using a private key and public key, you can create a signed URL for user access to CloudFront data. The SDK generates the URL, and keys must be uploaded or created and used in the key group options.
 
+we can add custom headers in the cloudfront which we can use to verify whether the request came from the cloudfront or not and can be handled accordingly based on the condition.
+
+while attaching any certificate to the cloudfront it needs to be created or uploaded to the acm and it should be created in us east n viginia region even if it is a global service
+
 ## Additional Features
 
 ## Edge Functions
@@ -38,3 +42,9 @@ Using a private key and public key, you can create a signed URL for user access 
 
 ### Geolocation Restrictions
 Restrict content delivery based on the geographic location of viewers.
+
+aws global accelorator 
+it is not a service from cloudfront but works from the edge locations of aws
+so basically it uses anycast ip which is multiple servers have same ip address and the request if forwarded to the closest server
+in this case the requset is forwarded to the closest edge location and then with the aws network it reaches the origin here also it reduces the latency as it used aws network and reduces the hops in the request
+both use aws shield and help provide safety from ddos attacks

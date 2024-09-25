@@ -159,3 +159,19 @@ Must use the traffic flow for creating these policies
 - If you buy your domain on a third-party registrar, you can still use Route 53 as the DNS Service provider:
   1. Create a Hosted Zone in Route 53
   2. Update NS Records on the third-party website to use Route 53 Name Servers
+
+DNS spoofing enable dnssec
+• Step 1 – Prepare for DNSSEC signing
+• Monitor zone availibility (through customer feedback)
+• Lower TTL for records (recommended 1 hour)
+• Lower SOA minimum for 5 minutes
+• Step 2 – Enable DNSSEC signing and create a KSK
+• Enable DNSSEC in Route 53 for your hosted zone (Console or CLI)
+• Make Route 53 create a KSK in the console and link it to a Customer managed CMK
+• Step 3 – Establish chain of trust
+• Create a chain of trust between the hosted zone and the parent hosted zone
+• By creating a Delegation Signer (DS) record in the parent zone
+• It contains a hash of the public key used to sign DNS records
+• Your registrar can be Route 53 or a 3rd party registrar
+• Step 4 – (good to have) Monitor for errors using CloudWatch Alarms
+• Create CloudWatch alarms for DNSSECInternalFailure and DNSSECKevSigningKeysNeedingAction

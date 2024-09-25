@@ -2,6 +2,8 @@
 
 ### 1. Application Load Balancer (ALB)
  ALB operates at the application layer (OSI model layer 7) and is designed to handle HTTP and HTTPS traffic. It provides advanced routing capabilities, including path-based and host-based routing.
+ • Each subnet must have a min of /27 and 8 free IP addresses
+• Across all subnets, a maximum of 100 IP addresses will be used per ALB
  
 ### ALB Stickiness (Session Affinity)
 Ensures that user sessions are consistently routed to the same target.
@@ -20,6 +22,25 @@ Provides a more balanced load distribution and improves application availability
 - **How It Works**: When an instance is deregistered or marked unhealthy, new connections are not sent to the instance, but existing connections are allowed to finish.
 ### 2. Network Load Balancer (NLB)
  NLB operates at the transport layer (OSI model layer 4) and is designed to handle TCP, UDP, and TLS traffic. It is optimized for high-performance and low-latency traffic.
+ • NLB has one static IP per AZ, and suppor ts
+assigning Elastic IP (Internet-facing NLB)
+(helpful for whitelisting specific IP addresses)
+• Client IP Preservation: client IP is forwarded to targets
+• Targets by instance ID / ECS Tasks: Enabled
+• Targets by IP address TCP & TLS: Disabled by default
+• Targets by IP address UDP & TCP_UDP: Enabled by default
+• You must enable an AZ before traffic is sent
+to that AZ (can be added after NLB
+creation)
+• Cross Zones Load Balancing only works for
+the availability zones that are enabled on the
+NLB
+• You cannot remove an AZ after it is enabled
+• Resolving Regional NLB DNS name returns
+the IP addresses of ENIs for all NLB nodes in all
+enabled AZs
+For internet-facing load balancers, the subnets that you specify must have at
+least 8 available IP addresses (e.g. min /28).
 ### 3. Global Load Balancer (GLB)
  AWS Global Accelerator provides a single entry point to your applications and optimizes traffic routing globally. It's not strictly a traditional load balancer but offers global traffic management.
 
@@ -85,3 +106,4 @@ Simple Scaling is a straightforward approach where a fixed number of instances a
 - **Trigger Action**: When the specified metric crosses the threshold, the ASG performs the scaling adjustment.
 - **Example Use Case**: Quick and simple scaling needs where detailed control is not necessary.
 
+We can have rules in the alb where we specify which requests to forward and redirect to different hosts on the conditions of headers or other http request details
